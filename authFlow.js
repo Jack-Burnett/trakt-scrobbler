@@ -2,7 +2,7 @@ message = {
     "type": "checkUrl"
 }
 
-console.log("AUTH FLOW")
+console.log("Running auth flow")
 
 chrome.runtime.sendMessage(message, function(response) {
     console.log(response.code)

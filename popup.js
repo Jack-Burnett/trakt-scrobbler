@@ -1,6 +1,6 @@
 let changeColor = document.getElementById('changeColor');
 let progress = document.getElementById('status_text');
-let logout = document.getElementById('logout');
+let logout_button = document.getElementById('logout_button');
 
 let init_section = document.getElementById('init_section');
 
@@ -41,12 +41,21 @@ login_button.onclick = function(element) {
   login()
 }
 
+logout_button.onclick = function(element) {
+  logout()
+}
+
 const login = function() {
   const redirectUrl = "https://www.amazon.co.uk/"
   const url = `https://trakt.tv/oauth/authorize?client_id=${apiKey}&redirect_uri=${redirectUrl}&response_type=code&state=multi-trakt`
   chrome.tabs.query({currentWindow: true, active: true}, function (tab) {
       chrome.tabs.update(tab.id, {url: url});
   });
+  
+}
+
+const logout = function() {
+  chrome.storage.sync.remove('token');
   
 }
 

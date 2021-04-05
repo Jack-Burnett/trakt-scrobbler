@@ -50,11 +50,12 @@ function stop(state) {
                 previousState.finished = true;
                 previousState.playing = false;
                 chrome.storage.local.set({'state': finishedState});
+                chrome.storage.sync.set
             // It will 409 on attempts to scrobble one thing twice in an hour or so window - still display as finished
             } else if(response.alreadyScrobbled) {
                 previousState.finished = true;
                 previousState.playing = false;
-                console.log("ALREAYD SCROBBLED")
+                console.log("Already scrobbled recently")
                 chrome.storage.local.set({'state': finishedState});
             } else {
                 previousState.finished = false;
