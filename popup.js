@@ -14,20 +14,25 @@ init_section.style.display = "block";
 login_section.style.display = "none";
 status_section.style.display = "none";
 
-chrome.storage.sync.get(['token', 'state'], function(data) {
+chrome.storage.sync.get(['token'], function(data) {
   if (!data.token) {
     login_section.style.display = "block";
   } else {
     status_section.style.display = "block";
     progress.innerHTML = "";
-    if (data.state) {
     
-      const playing = data.state.finished ? "Finished" : (data.state.playing ? "Playing" : "Paused");
-      const percent = Math.floor(data.state.percent);
-      const media = describeMedia(data.state.media);
+    // This is update more frequently and does not really need to be cross-device, so just use local not sync
+    chrome.storage.local.get(['state'], function(data) {
+      console.log("Render state");
+      console.log(data.state);
+      if (data.state) {
+        const playing = data.state.finished ? "Finished" : (data.state.playing ? "Playing" : "Paused");
+        const percent = Math.floor(data.state.percent);
+        const media = describeMedia(data.state.media);
 
-      progress.innerHTML = `${playing} ${media} (${percent}%)`
-    }
+        progress.innerHTML = `${playing} ${media} (${percent}%)`
+      }
+    });
   }
   init_section.style.display = "none";
 });

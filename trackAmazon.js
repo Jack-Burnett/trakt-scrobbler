@@ -26,10 +26,17 @@ const previousState = {
     finished: false
 };
 
+addEventListener("unload", function (event) {
+    stop (previousState);
+}, true);
+
 function stop(state) {
     // Need to store outside the future as the state will change
     const media = state.media;
     const percent = state.percent;
+
+    previousState.finished = true;
+    chrome.storage.local.set({'state': previousState});
     lookupMedia(state.media).then(mediaObject => {
         scrobble(mediaObject, media.movie, States.STOP, percent, token).then(response => {
             const finishedState = {
@@ -40,17 +47,26 @@ function stop(state) {
             }
             // Only stops at 80% or more should return as scrobbles
             if (response.action == "scrobble") {
-                chrome.storage.sync.set({state: finishedState});
+                previousState.finished = true;
+                previousState.playing = false;
+                chrome.storage.local.set({'state': finishedState});
             // It will 409 on attempts to scrobble one thing twice in an hour or so window - still display as finished
             } else if(response.alreadyScrobbled) {
+                previousState.finished = true;
+                previousState.playing = false;
                 console.log("ALREAYD SCROBBLED")
-                chrome.storage.sync.set({state: finishedState});
+                chrome.storage.local.set({'state': finishedState});
+            } else {
+                previousState.finished = false;
+                previousState.playing = false;
             }
         });
     });
 }
 
 function update() {
+    // We track this or else when you exit the active player it will then log a play and a pause as the progress bar is reset
+    const playerOpen = isPlayerOpen();
     const media = checkMedia();
     const percent = checkProgress(); 
     var playing = true;
@@ -58,31 +74,37 @@ function update() {
     // If the media has changed (including to null)
     if (previousState.media != null && !previousState.media.equals(media)) {
         stop(previousState);
-    } else if (media != null && previousState.percent != null) {
-        var playing = true;
-        if (percent === previousState.percent) {
-            playing = false;
+    } else if(playerOpen) {
+        if (media != null && previousState.percent != null) {
+            var playing = true;
+            if (percent === previousState.percent) {
+                playing = false;
+            }
+            
+            // console.log ("percents: " + previousState.percent + "   " + percent);
+
+            if (!previousState.playing && playing) {
+                lookupMedia(media).then(mediaObject => {
+                    scrobble(mediaObject, media.movie, States.START, percent, token);
+                });
+            }
+            if (previousState.playing && !playing) {
+                lookupMedia(media).then(mediaObject => {
+                    scrobble(mediaObject, media.movie, States.PAUSE, percent, token);
+                });
+            }
+            previousState.playing = playing;
+            previousState.finished = false;
         }
+
+        previousState.media = media;
+        previousState.percent = percent;
         
-        // console.log ("percents: " + previousState.percent + "   " + percent);
-
-        if (!previousState.playing && playing) {
-            lookupMedia(media).then(mediaObject => {
-                scrobble(mediaObject, media.movie, States.START, percent, token);
-            });
-        }
-        if (previousState.playing && !playing) {
-            lookupMedia(media).then(mediaObject => {
-                scrobble(mediaObject, media.movie, States.PAUSE, percent, token);
-            });
-        }
-        previousState.playing = playing;
+        chrome.storage.local.set({'state': previousState}, function() {
+            console.log('Stored state: ');
+            console.log(previousState);
+        });
     }
-
-    previousState.media = media;
-    previousState.percent = percent;
-    
-    chrome.storage.sync.set({state: previousState});
 }
 
 function checkProgress() {
@@ -133,6 +155,16 @@ class Media {
             other.season == this.season &&
             other.episode == this.episode;
     };
+}
+
+function isPlayerOpen() {
+    // This is the element that contains the player
+    let player = document.getElementById("dv-web-player");
+    // If you are on a watch page but not in the player itself, it will be hidden by missing the following class
+    if (player != undefined && player.className == 'dv-player-fullscreen') {
+        return true;
+    }
+    return false;
 }
 
 function checkMedia() {
