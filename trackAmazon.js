@@ -36,12 +36,7 @@ function update() {
     if (previousState.media != null && !previousState.media.equals(media)) {
         // TODO also detect like page quit
         lookupMedia(previousState.media).then(mediaObject => {
-            if (true) {
-                console.log("STOP");
-                console.log(mediaObject);
-                return;
-            }
-            scrobble(mediaObject, previousState.media.movie, States.STOP, token);
+            scrobble(mediaObject, previousState.media.movie, States.STOP, percent, token);
         });
     } else if (media != null && previousState.percent != null) {
         var playing = true;
@@ -53,30 +48,21 @@ function update() {
 
         if (!previousState.playing && playing) {
             lookupMedia(media).then(mediaObject => {
-                if (true) {
-                    console.log("PLAY");
-                    console.log(mediaObject);
-                    return;
-                }
-                scrobble(mediaObject, media.movie, States.PLAY, token);
+                scrobble(mediaObject, media.movie, States.PLAY, percent, token);
             });
         }
         if (previousState.playing && !playing) {
             lookupMedia(media).then(mediaObject => {
-                if (true) {
-                    console.log("PAUSE");
-                    console.log(mediaObject);
-                    return;
-                }
-                scrobble(mediaObject, media.movie, States.PAUSE, token);
+                scrobble(mediaObject, media.movie, States.PAUSE, percent, token);
             });
         }
         previousState.playing = playing;
     }
 
-
     previousState.media = media;
     previousState.percent = percent;
+    
+    chrome.storage.sync.set({state: previousState});
 }
 
 function checkProgress() {
@@ -91,12 +77,6 @@ function checkProgress() {
     // Normalise between 0 and 100 (this is not really neccesary in practice)
     const percent = remap(value, {bottom: min, top: max}, {bottom: 0, top: 100})
     return percent;
-    
-    
-    //chrome.storage.sync.set({progress: percent}, function() {
-    //    console.log(percent + "%");
-    //})
-
 }
 
 function remap(old_value, old_range, new_range) {
@@ -124,7 +104,7 @@ class Media {
         this.episode = episode;
         this.hash = movie + title + season + ":" + episode;
     }
-    equals = function (other) {
+    equals(other) {
         if (other == null) {
             return false;
         }
@@ -158,22 +138,3 @@ function checkMedia() {
         return null;
     }
 }
-
-
-
-//chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
-//    console.log(response.farewell);
-//});
-
-/*
-const token = "ab49318eae60ff54926aecd4ad5de89545fc453205fbd884388e0391958b6bea"
-doLookup("Futurama", false, 2, 13).then(media => {
-    console.log(media)
-    start(media, false, token).then(
-        start => console.log(start)
-    )
-})
-doLookup("Back to the future", true).then(media => {
-    console.log(media)
-})
-*/

@@ -65,9 +65,14 @@ const States = {
     PAUSE: "pause"
 }
 
-const scrobble = async(media, isMovie, state, token) => {
+const scrobble = async(media, isMovie, state, percent, token) => {
+    if (true) {
+        console.log(state);
+        console.log(media);
+        return;
+    }
     var body = {
-        "progress": 1.25,
+        "progress": percent,
         //"app_version": "1.0",
         //"app_date": "2014-09-22"
     }

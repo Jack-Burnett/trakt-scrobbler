@@ -9,11 +9,6 @@
     },
     "content_scripts": [
         {
-            "matches": ["https://developer.chrome.com/*", "https://www.amazon.co.uk/gp/video/detail/*", "https://www.amazon.co.uk/*"],
-            "css": ["myStyles.css"],
-            "js": ["contentScript.js"]
-        },
-        {
             "matches": ["https://www.amazon.co.uk/gp/video/detail/*"],
             "js": ["config.js", "trakt.js", "trackAmazon.js"]
         },

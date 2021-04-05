@@ -1,5 +1,5 @@
 let changeColor = document.getElementById('changeColor');
-let progress = document.getElementById('progress');
+let progress = document.getElementById('status_text');
 let logout = document.getElementById('logout');
 
 let init_section = document.getElementById('init_section');
@@ -14,14 +14,23 @@ init_section.style.display = "block";
 login_section.style.display = "none";
 status_section.style.display = "none";
 
-chrome.storage.sync.get('token', function(data) {
+chrome.storage.sync.get(['token', 'state'], function(data) {
   if (!data.token) {
     login_section.style.display = "block";
   } else {
     status_section.style.display = "block";
-    progress.innerHTML = data.token;
+    progress.innerHTML = "";
+    console.log("s s s s state!")
+    console.log(data.state)
+    if (data.state) {
+    
+      const playing = data.state.playing ? "Playing" : "Paused";
+      const percent = Math.floor(data.state.percent);
+      const media = describeMedia(data.state.media);
+
+      progress.innerHTML = `${playing} ${media} (${percent}%)`
+    }
   }
-  // changeColor.setAttribute('value', data.color);
   init_section.style.display = "none";
 });
 
@@ -36,6 +45,14 @@ const login = function() {
       chrome.tabs.update(tab.id, {url: url});
   });
   
+}
+
+const describeMedia = function(media) {
+  if (media.movie) {
+      return media.title;
+  } else {
+      return media.title + " S" + media.season + "E" + media.episode;
+  }
 }
 
 //chrome.storage.sync.get('progress', function(data) {
