@@ -7,10 +7,12 @@
   -Log stop on window close DONE
   -Show currently watching  DONE
   -BUG why are there starts and pauses after it stops? DONE
-  -Logout
-  -Show recently watched
-  -Cleanup
+  -Logout DONE
+  -Fully working against amazon DONE
+  -readme
 
-  -Fully working against amazon
+  -Cleanup
+  -Show recently watched
   -Disney plus
   -Custom icon
+  -Would not work on amazon.com :v
