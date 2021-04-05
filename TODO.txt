@@ -9,7 +9,7 @@
   -BUG why are there starts and pauses after it stops? DONE
   -Logout DONE
   -Fully working against amazon DONE
-  -readme
+  -readme DONE
 
   -Cleanup
   -Show recently watched

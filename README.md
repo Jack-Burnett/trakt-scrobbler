@@ -2,7 +2,7 @@
 
 [trakt.tv](https://trakt.tv/) is a site to track what tv and films you watch.
 
-This is a third-party scrobbler that automatically records plays made on amazon - implemented as a Chrome plugin.
+This is a third-party scrobbler that automatically records plays made on Amazon Prime - implemented as a Chrome plugin.
 
 I intend to expand this to, at minimum, Disney Plus.
 
