@@ -1,0 +1,13 @@
+<head>
+    <script src="trakt.js"></script>
+    <script>
+        const token = "ab49318eae60ff54926aecd4ad5de89545fc453205fbd884388e0391958b6bea"
+        doLookup("Futurama", false, 2, 13).then(media => {
+            console.log(media)
+            start(media, false, token);
+        })
+        doLookup("Back to the future", true).then(media => {
+            console.log(media)
+        })
+    </script>
+</head>

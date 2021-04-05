@@ -4,14 +4,39 @@
     <style>
       button {
         height: 30px;
-        width: 30px;
+        width: 50px;
         outline: none;
+        padding: 5px;
+        margin:0 auto;
+        display:block;
+      }
+      #login_section {
+        width: 200px;
+        height: 80px;
+      }
+      body {
+        margin: 0px;
+      }
+      p {
+        padding-left: 10px;
+        padding-right: 10px;
       }
     </style>
   </head>
   <body>
-    <button id="changeColor"></button>
-    <p id="progress"></p>
+    <div id="init_section">
+      <p>Initialising...</p>
+    </div>
+    <div id="login_section">
+      <p>To start you will need to authorise trakt to use this plugin</p>
+      <button id="login_button">Login</button>
+    </div>
+    <div id="status_section">
+      <p>Watching a show</p>
+      <p id="progress"></p>
+      <button id="logout">Logout</button>
+    </div>
+    <script src="config.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

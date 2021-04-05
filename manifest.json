@@ -2,16 +2,24 @@
     "name": "Getting Started Example",
     "version": "1.0",
     "description": "Build an Extension!",
-    "permissions": ["activeTab", "declarativeContent", "storage"],
+    "permissions": ["activeTab", "declarativeContent", "storage", "tabs", "https://api.trakt.tv/*"],
     "background": {
       "scripts": ["background.js"],
       "persistent": false
     },
     "content_scripts": [
         {
-            "matches": ["https://developer.chrome.com/*", "https://www.amazon.co.uk/gp/video/detail/*"],
+            "matches": ["https://developer.chrome.com/*", "https://www.amazon.co.uk/gp/video/detail/*", "https://www.amazon.co.uk/*"],
             "css": ["myStyles.css"],
             "js": ["contentScript.js"]
+        },
+        {
+            "matches": ["https://www.amazon.co.uk/gp/video/detail/*"],
+            "js": ["config.js", "trakt.js", "trackAmazon.js"]
+        },
+        {
+            "matches": ["https://www.amazon.co.uk/*"],
+            "js": ["config.js", "trakt.js", "authFlow.js"]
         }
     ],
     "options_page": "options.html",

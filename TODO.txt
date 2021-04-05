@@ -1,0 +1,16 @@
+<h1 class="atvwebplayersdk-title-text fgzdi7m f10ip5t1 fva8997">Futurama</h1>
+<h2 class="atvwebplayersdk-subtitle-text f15586js f1iodedr fdm7v fva8997">Season 2, Ep. 13  A Bicyclops Built for Two</h2>
+
+The Season X, ep. X structure is consistent!
+For a film the subtitle exists but is blank
+
+
+
+  -Scrape show name and number from amazon
+  -Write code to progrmatically log a play
+  -Get the code to run from the plugin
+  -Detect plays/pauses/progress
+  -Server to perform auth
+
+  -Fully working against amazon
+  -Disney plus
