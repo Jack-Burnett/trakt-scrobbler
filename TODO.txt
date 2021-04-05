@@ -6,7 +6,7 @@
 
   -Log stop on window close
   -Logout
-  -Show currently watching
+  -Show currently watching  DONE
   -Show recently watched
    -Cleanup
 

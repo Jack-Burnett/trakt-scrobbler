@@ -5,14 +5,12 @@ chrome.storage.sync.get('token', function(data) {
         token = data.token;
         const interval = setInterval(update, 1000);
     }
-    // changeColor.setAttribute('value',
 });
 
 // Map of media to promise of trakt media object
 const medias = new Map();
 
 async function lookupMedia(media) {
-    console.log("Media hash " + media.hash)
     if (!medias.has(media.hash)) {
         const traktMedia = doLookup(media.title, media.movie, media.season, media.episode)
         medias.set(media.hash, traktMedia);
@@ -24,8 +22,33 @@ async function lookupMedia(media) {
 const previousState = {
     media: null,
     percent: null,
-    playing: false
+    playing: false,
+    finished: false
 };
+
+function stop(state) {
+    // Need to store outside the future as the state will change
+    const media = state.media;
+    const percent = state.percent;
+    lookupMedia(state.media).then(mediaObject => {
+        scrobble(mediaObject, media.movie, States.STOP, percent, token).then(response => {
+            const finishedState = {
+                media: media,
+                percent: percent,
+                playing: false,
+                finished: true
+            }
+            // Only stops at 80% or more should return as scrobbles
+            if (response.action == "scrobble") {
+                chrome.storage.sync.set({state: finishedState});
+            // It will 409 on attempts to scrobble one thing twice in an hour or so window - still display as finished
+            } else if(response.alreadyScrobbled) {
+                console.log("ALREAYD SCROBBLED")
+                chrome.storage.sync.set({state: finishedState});
+            }
+        });
+    });
+}
 
 function update() {
     const media = checkMedia();
@@ -34,10 +57,7 @@ function update() {
 
     // If the media has changed (including to null)
     if (previousState.media != null && !previousState.media.equals(media)) {
-        // TODO also detect like page quit
-        lookupMedia(previousState.media).then(mediaObject => {
-            scrobble(mediaObject, previousState.media.movie, States.STOP, percent, token);
-        });
+        stop(previousState);
     } else if (media != null && previousState.percent != null) {
         var playing = true;
         if (percent === previousState.percent) {
@@ -48,7 +68,7 @@ function update() {
 
         if (!previousState.playing && playing) {
             lookupMedia(media).then(mediaObject => {
-                scrobble(mediaObject, media.movie, States.PLAY, percent, token);
+                scrobble(mediaObject, media.movie, States.START, percent, token);
             });
         }
         if (previousState.playing && !playing) {

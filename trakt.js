@@ -66,11 +66,6 @@ const States = {
 }
 
 const scrobble = async(media, isMovie, state, percent, token) => {
-    if (true) {
-        console.log(state);
-        console.log(media);
-        return;
-    }
     var body = {
         "progress": percent,
         //"app_version": "1.0",
@@ -94,6 +89,9 @@ const scrobble = async(media, isMovie, state, percent, token) => {
         }
     });
     const myJson = await response.json(); //extract JSON from the http response
+    if (response.status == 409) {
+        myJson.alreadyScrobbled = true;
+    }
     return myJson
 }
 

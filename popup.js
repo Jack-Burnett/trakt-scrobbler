@@ -20,11 +20,9 @@ chrome.storage.sync.get(['token', 'state'], function(data) {
   } else {
     status_section.style.display = "block";
     progress.innerHTML = "";
-    console.log("s s s s state!")
-    console.log(data.state)
     if (data.state) {
     
-      const playing = data.state.playing ? "Playing" : "Paused";
+      const playing = data.state.finished ? "Finished" : (data.state.playing ? "Playing" : "Paused");
       const percent = Math.floor(data.state.percent);
       const media = describeMedia(data.state.media);
 
